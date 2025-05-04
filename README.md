@@ -1,24 +1,39 @@
-# Task Master [![GitHub stars](https://img.shields.io/github/stars/eyaltoledano/claude-task-master?style=social)](https://github.com/eyaltoledano/claude-task-master/stargazers)
+<div align="center">
+
+# 🌟 **HUGE CREDITS to the OG Creator [@eyaltoledano](https://github.com/eyaltoledano) 🌟**
 
 [![CI](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/eyaltoledano/claude-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/task-master-ai.svg)](https://badge.fury.io/js/task-master-ai) [![Discord](https://dcbadge.limes.pink/api/server/https://discord.gg/taskmasterai?style=flat)](https://discord.gg/taskmasterai) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
 
-### By [@eyaltoledano](https://x.com/eyaltoledano) & [@RalphEcom](https://x.com/RalphEcom)
+This project ("pollinations-taskmaster-ai") is a respectful fork, overhaul, and vivid remix of Eyal Toledano's legendary ["Task Master"](https://github.com/eyaltoledano/claude-task-master). Every part of the architecture, original documentation, deep LLM workflow, and smart agent CLI leadership comes from the OG.
 
+> If you find this project useful, please ⭐ **star the original repo** as thanks to Eyal and show the LLM world some respect!
+>
+> [Original Task Master](https://github.com/eyaltoledano/claude-task-master) • [X (Twitter): @eyaltoledano](https://x.com/eyaltoledano)
+
+---
+
+# Pollinations TaskMaster AI [![GitHub stars](https://img.shields.io/github/stars/LousyBook94/pollinations-task-master?style=social)](https://github.com/LousyBook94/pollinations-task-master/stargazers)
+
+[![CI](https://github.com/LousyBook94/pollinations-task-master/actions/workflows/ci.yml/badge.svg)](https://github.com/LousyBook94/pollinations-task-master/actions/workflows/ci.yml) [![npm version](https://badge.fury.io/js/pollinations-taskmaster.svg)](https://badge.fury.io/js/pollinations-taskmaster) [![Discord Follow](https://dcbadge.limes.pink/api/server/https://discord.gg/RNTh5tQP6b?style=flat)](https://discord.gg/RNTh5tQP6b) [![License: MIT with Commons Clause](https://img.shields.io/badge/license-MIT%20with%20Commons%20Clause-blue.svg)](LICENSE)
+
+### By [@LousyBook94](https://github.com/LousyBook94) (maintenance/fork) • OG: [@eyaltoledano](https://github.com/eyaltoledano) • [@RalphEcom](https://github.com/RalphEcom)
+
+[![Youtube Follow](https://img.shields.io/youtube/channel/subscribers/UCBNE8MNvq1XppUmpAs20m4w)](https://youtube.com/@LousyBook01)
 [![Twitter Follow](https://img.shields.io/twitter/follow/eyaltoledano?style=flat)](https://x.com/eyaltoledano)
 [![Twitter Follow](https://img.shields.io/twitter/follow/RalphEcom?style=flat)](https://x.com/RalphEcom)
+A task management system for AI-driven development using Pollinations.ai, designed to work seamlessly with Cursor AI.
 
-A task management system for AI-driven development with Claude, designed to work seamlessly with Cursor AI.
+</div align="center">
 
 ## Requirements
 
-- Anthropic API key (Claude API)
-- OpenAI SDK (for Perplexity API integration, optional)
+- Internet connection (for Pollinations.ai API access)
 
 ## Quick Start
 
 ### Option 1 | MCP (Recommended):
 
-MCP (Model Control Protocol) provides the easiest way to get started with Task Master directly in your editor.
+MCP (Model Control Protocol) provides the easiest way to get started with Pollinations TaskMaster AI directly in your editor.
 
 1. **Add the MCP config to your editor** (Cursor recommended, but it works with other text editors):
 
@@ -27,7 +42,7 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
 	"mcpServers": {
 		"taskmaster-ai": {
 			"command": "npx",
-			"args": ["-y", "--package=task-master-ai", "task-master-ai"],
+			"args": ["-y", "--package=pollinations-taskmaster", "pollinations-taskmaster"],
 			"env": {
 				"ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
 				"PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -45,7 +60,7 @@ MCP (Model Control Protocol) provides the easiest way to get started with Task M
 
 2. **Enable the MCP** in your editor
 
-3. **Prompt the AI** to initialize Task Master:
+3. **Prompt the AI** to initialize Pollinations TaskMaster AI:
 
 ```
 Can you please initialize taskmaster-ai into my project?
@@ -66,10 +81,10 @@ Can you help me expand task 4?
 
 ```bash
 # Install globally
-npm install -g task-master-ai
+npm install -g pollinations-taskmaster
 
 # OR install locally within your project
-npm install task-master-ai
+npm install pollinations-taskmaster
 ```
 
 #### Initialize a new project
@@ -107,8 +122,8 @@ task-master generate
 
 For more detailed information, check out the documentation in the `docs` directory:
 
-- [Configuration Guide](docs/configuration.md) - Set up environment variables and customize Task Master
-- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Task Master
+- [Configuration Guide](docs/configuration.md) - Environment variables (most are optional; no API key needed for Pollinations)
+- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Pollinations TaskMaster AI
 - [Command Reference](docs/command-reference.md) - Complete list of all available commands
 - [Task Structure](docs/task-structure.md) - Understanding the task format and features
 - [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
@@ -120,42 +135,46 @@ For more detailed information, check out the documentation in the `docs` directo
 Try running it with Node directly:
 
 ```bash
-node node_modules/claude-task-master/scripts/init.js
+node node_modules/pollinations-task-master/scripts/init.js
 ```
 
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
-cd claude-task-master
+git clone https://github.com/LousyBook94/pollinations-task-master.git
+cd pollinations-task-master
 node scripts/init.js
 ```
 
 ## Contributors
 
-<a href="https://github.com/eyaltoledano/claude-task-master/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=eyaltoledano/claude-task-master" alt="Task Master project contributors" />
+<a href="https://github.com/LousyBook94/pollinations-task-master/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=LousyBook94/pollinations-task-master" alt="Pollinations TaskMaster AI project contributors" />
 </a>
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=eyaltoledano/claude-task-master&type=Timeline)](https://www.star-history.com/#eyaltoledano/claude-task-master&Timeline)
+[![Star History Chart](https://api.star-history.com/svg?repos=LousyBook94/pollinations-task-master&type=Timeline)](https://www.star-history.com/#LousyBook94/pollinations-task-master&Timeline)
 
 ## Licensing
 
-Task Master is licensed under the MIT License with Commons Clause. This means you can:
+Pollinations TaskMaster AI is licensed under the MIT License with Commons Clause.
+AI Backed by [Pollinations.ai](https://pollinations.ai) 🌱 – 100% free, open LLM/GenAI APIs.
+No private keys, no Anthropic or OpenAI lock-in, just hassle-free LLM automation!
+
+This means you can:
 
 ✅ **Allowed**:
 
-- Use Task Master for any purpose (personal, commercial, academic)
+- Use Pollinations TaskMaster AI for any purpose (personal, commercial, academic)
 - Modify the code
 - Distribute copies
-- Create and sell products built using Task Master
+- Create and sell products built using Pollinations TaskMaster AI
 
 ❌ **Not Allowed**:
 
-- Sell Task Master itself
-- Offer Task Master as a hosted service
-- Create competing products based on Task Master
+- Sell Pollinations TaskMaster AI itself
+- Offer Pollinations TaskMaster AI as a hosted service
+- Create competing products based on Pollinations TaskMaster AI
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.
