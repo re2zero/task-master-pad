@@ -10,35 +10,31 @@ Taskmaster uses two primary methods for configuration:
     - **Example Structure:**
       ```json
       {
-      	"models": {
-      		"main": {
-      			"provider": "anthropic",
-      			"modelId": "claude-3-7-sonnet-20250219",
-      			"maxTokens": 64000,
-      			"temperature": 0.2
-      		},
-      		"research": {
-      			"provider": "perplexity",
-      			"modelId": "sonar-pro",
-      			"maxTokens": 8700,
-      			"temperature": 0.1
-      		},
-      		"fallback": {
-      			"provider": "anthropic",
-      			"modelId": "claude-3-5-sonnet",
-      			"maxTokens": 64000,
-      			"temperature": 0.2
-      		}
-      	},
-      	"global": {
-      		"logLevel": "info",
-      		"debug": false,
-      		"defaultSubtasks": 5,
-      		"defaultPriority": "medium",
-      		"projectName": "Your Project Name",
-      		"ollamaBaseUrl": "http://localhost:11434/api",
-      		"azureOpenaiBaseUrl": "https://your-endpoint.openai.azure.com/"
-      	}
+        "models": {
+          "main": {
+            "provider": "pollinations",
+            "modelId": "openai" // Or any available Pollinations model
+          },
+          "research": {
+            "provider": "pollinations",
+            "modelId": "searchgpt"
+          },
+          "custom": {
+            "provider": "custom",
+            "modelId": "gpt-4o",
+            "baseUrl": "https://your-custom-endpoint.com/openai", // optional, else uses .env
+            "apiKey": "sk-your-custom-key" // optional, else uses .env
+          }
+        },
+        "global": {
+          "logLevel": "info",
+          "debug": false,
+          "defaultSubtasks": 5,
+          "defaultPriority": "medium",
+          "projectName": "Your Project Name",
+          "ollamaBaseUrl": "http://localhost:11434/api",
+          "azureOpenaiBaseUrl": "https://your-endpoint.openai.azure.com/"
+        }
       }
       ```
 
@@ -62,7 +58,7 @@ Taskmaster uses two primary methods for configuration:
 
 **Important:** Settings like model ID selections (`main`, `research`, `fallback`), `maxTokens`, `temperature`, `logLevel`, `defaultSubtasks`, `defaultPriority`, and `projectName` are **managed in `.taskmasterconfig`**, not environment variables.
 
-## Example `.env` File (for API Keys)
+## Example `.env` File (for API Keys and Custom Provider)
 
 ```
 # Required API keys for providers configured in .taskmasterconfig
@@ -71,6 +67,12 @@ PERPLEXITY_API_KEY=pplx-your-key-here
 # OPENAI_API_KEY=sk-your-key-here
 # GOOGLE_API_KEY=AIzaSy...
 # etc.
+
+# For Pollinations provider: NO API key is needed!
+
+# For Custom provider (OpenAI-compatible endpoints)
+CUSTOM_BASE=https://your-custom-endpoint.com/openai
+CUSTOM_API_KEY=sk-your-custom-key
 
 # Optional Endpoint Overrides
 # AZURE_OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/
@@ -83,6 +85,8 @@ PERPLEXITY_API_KEY=pplx-your-key-here
 
 - If Task Master reports errors about missing configuration or cannot find `.taskmasterconfig`, run `task-master models --setup` in your project root to create or repair the file.
 - Ensure API keys are correctly placed in your `.env` file (for CLI) or `.cursor/mcp.json` (for MCP) and are valid for the providers selected in `.taskmasterconfig`.
+- For Pollinations, you do not need any API key at all!
+- For Custom, you must set `CUSTOM_BASE` and `CUSTOM_API_KEY` in `.env` or override via `.taskmasterconfig`.
 
 ### If `task-master init` doesn't respond:
 
@@ -95,7 +99,7 @@ node node_modules/claude-task-master/scripts/init.js
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
+git clone https://github.com/LousyBook94/pollinations-task-master.git
 cd claude-task-master
 node scripts/init.js
 ```

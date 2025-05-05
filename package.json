@@ -1,13 +1,14 @@
 {
-	"name": "task-master-ai",
-	"version": "0.13.2-rc.1",
-	"description": "A task management system for ambitious AI-driven development that doesn't overwhelm and confuse Cursor.",
+	"name": "pollinations-taskmaster",
+	"version": "0.13.3",
+	"description": "Pollinations-powered AI-first task management CLI. Like the original 'task-master'—now enhanced for open GenAI and modern code.",
 	"main": "index.js",
 	"type": "module",
 	"bin": {
-		"task-master": "bin/task-master.js",
-		"task-master-mcp": "mcp-server/server.js",
-		"task-master-ai": "mcp-server/server.js"
+	    "pollinations-taskmaster": "bin/task-master.js",
+	    "task-master": "bin/task-master.js",
+	    "pollinations-taskmaster-ai": "mcp-server/server.js",
+	    "task-master-mcp": "mcp-server/server.js"
 	},
 	"scripts": {
 		"test": "node --experimental-vm-modules node_modules/.bin/jest",
@@ -16,7 +17,6 @@
 		"test:coverage": "node --experimental-vm-modules node_modules/.bin/jest --coverage",
 		"test:e2e": "./tests/e2e/run_e2e.sh",
 		"test:e2e-report": "./tests/e2e/run_e2e.sh --analyze-log",
-		"prepare": "chmod +x bin/task-master.js mcp-server/server.js",
 		"changeset": "changeset",
 		"release": "changeset publish",
 		"inspector": "npx @modelcontextprotocol/inspector node mcp-server/server.js",
@@ -75,7 +75,7 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/eyaltoledano/claude-task-master.git"
+		"url": "git+https://github.com/LousyBook94/pollinations-task-master.git"
 	},
 	"homepage": "https://github.com/eyaltoledano/claude-task-master#readme",
 	"bugs": {

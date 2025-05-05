@@ -101,7 +101,7 @@ node node_modules/claude-task-master/scripts/init.js
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
+git clone https://github.com/LousyBook94/pollinations-task-master.git
 cd claude-task-master
 node scripts/init.js
 ```

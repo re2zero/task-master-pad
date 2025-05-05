@@ -1,21 +1,21 @@
 {
   "models": {
     "main": {
-      "provider": "anthropic",
-      "modelId": "claude-3-7-sonnet-20250219",
-      "maxTokens": 100000,
+      "provider": "pollinations",
+      "modelId": "openai-large",
+      "maxTokens": 4096,
       "temperature": 0.2
     },
     "research": {
-      "provider": "perplexity",
-      "modelId": "sonar-pro",
-      "maxTokens": 8700,
+      "provider": "pollinations",
+      "modelId": "searchgpt",
+      "maxTokens": 4096,
       "temperature": 0.1
     },
     "fallback": {
-      "provider": "anthropic",
-      "modelId": "claude-3-7-sonnet-20250219",
-      "maxTokens": 120000,
+      "provider": "pollinations",
+      "modelId": "openai-large",
+      "maxTokens": 4096,
       "temperature": 0.2
     }
   },

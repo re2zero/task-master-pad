@@ -112,6 +112,38 @@ task-master next
 task-master generate
 ```
 
+## Provider Setup Examples
+
+### 🌱 Pollinations Provider (No API Key Needed)
+- Use for any role in `.taskmasterconfig`:
+```json
+"main": {
+  "provider": "pollinations",
+  "modelId": "openai"
+},
+"research": {
+  "provider": "pollinations",
+  "modelId": "searchgpt"
+}
+```
+- No API key or signup required!
+
+### 🛠️ Custom Provider (Self-Hosted/OpenAI-Compatible)
+- Use for any role in `.taskmasterconfig`:
+```json
+"custom": {
+  "provider": "custom",
+  "modelId": "gpt-4o",
+  "baseUrl": "https://your-custom-endpoint.com/openai", // optional, else uses .env
+  "apiKey": "sk-your-custom-key" // optional, else uses .env
+}
+```
+- Or set in `.env`:
+```
+CUSTOM_BASE=https://your-custom-endpoint.com/openai
+CUSTOM_API_KEY=sk-your-custom-key
+```
+
 ## Setting up Cursor AI Integration
 
 Task Master is designed to work seamlessly with [Cursor AI](https://www.cursor.so/), providing a structured workflow for AI-driven development.

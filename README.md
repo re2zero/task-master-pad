@@ -122,11 +122,49 @@ task-master generate
 
 For more detailed information, check out the documentation in the `docs` directory:
 
-- [Configuration Guide](docs/configuration.md) - Environment variables (most are optional; no API key needed for Pollinations)
-- [Tutorial](docs/tutorial.md) - Step-by-step guide to getting started with Pollinations TaskMaster AI
-- [Command Reference](docs/command-reference.md) - Complete list of all available commands
-- [Task Structure](docs/task-structure.md) - Understanding the task format and features
-- [Example Interactions](docs/examples.md) - Common Cursor AI interaction examples
+- [Configuration Guide](docs/configuration.md) — Environment variables & model selection (Pollinations requires NO API key; Custom lets you use any OpenAI-compatible endpoint via `CUSTOM_BASE`/`CUSTOM_API_KEY` in `.env` or `.taskmasterconfig`)
+- [Tutorial](docs/tutorial.md) — Step-by-step guide to getting started with Pollinations TaskMaster AI, including using Pollinations and Custom providers
+- [Command Reference](docs/command-reference.md) — Complete list of all available commands and provider/model selection
+- [Task Structure](docs/task-structure.md) — Understanding the task format and features
+- [Example Interactions](docs/examples.md) — Common Cursor AI interaction examples
+
+## Provider Support & Configuration
+
+### 🌱 Pollinations Provider (No API Key Needed)
+- Use `provider: "pollinations"` in `.taskmasterconfig` for any role.
+- Select from a wide range of free, open models (see `task-master models --setup` or `supported-models.json`).
+- No API key or signup needed!
+
+### 🛠️ Custom Provider (Bring Your Own OpenAI-Compatible Endpoint)
+- Use `provider: "custom"` in `.taskmasterconfig` for any role.
+- Set `CUSTOM_BASE` and `CUSTOM_API_KEY` in your `.env` file, or override with `baseUrl` and `apiKey` directly in `.taskmasterconfig`.
+- Great for self-hosted, enterprise, or experimental endpoints.
+
+**Example `.env`:**
+```
+CUSTOM_BASE=https://your-custom-endpoint.com/openai
+CUSTOM_API_KEY=sk-your-custom-key
+```
+
+**Example `.taskmasterconfig`:**
+```json
+"models": {
+  "main": {
+    "provider": "pollinations",
+    "modelId": "openai" // or any available model
+  },
+  "research": {
+    "provider": "pollinations",
+    "modelId": "searchgpt"
+  },
+  "custom": {
+    "provider": "custom",
+    "modelId": "gpt-4o",
+    "baseUrl": "https://your-custom-endpoint.com/openai", // optional override
+    "apiKey": "sk-your-custom-key" // optional override
+  }
+}
+```
 
 ## Troubleshooting
 
@@ -162,19 +200,6 @@ Pollinations TaskMaster AI is licensed under the MIT License with Commons Clause
 AI Backed by [Pollinations.ai](https://pollinations.ai) 🌱 – 100% free, open LLM/GenAI APIs.
 No private keys, no Anthropic or OpenAI lock-in, just hassle-free LLM automation!
 
-This means you can:
-
-✅ **Allowed**:
-
-- Use Pollinations TaskMaster AI for any purpose (personal, commercial, academic)
-- Modify the code
-- Distribute copies
-- Create and sell products built using Pollinations TaskMaster AI
-
-❌ **Not Allowed**:
-
-- Sell Pollinations TaskMaster AI itself
-- Offer Pollinations TaskMaster AI as a hosted service
-- Create competing products based on Pollinations TaskMaster AI
+**You can now use the Pollinations provider for free, or bring your own API with the Custom provider!**
 
 See the [LICENSE](LICENSE) file for the complete license text and [licensing details](docs/licensing.md) for more information.
