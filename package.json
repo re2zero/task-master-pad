@@ -77,9 +77,9 @@
 		"type": "git",
 		"url": "git+https://github.com/LousyBook94/pollinations-task-master.git"
 	},
-	"homepage": "https://github.com/eyaltoledano/claude-task-master#readme",
+	"homepage": "https://github.com/LousyBook94/pollinations-task-master#readme",
 	"bugs": {
-		"url": "https://github.com/eyaltoledano/claude-task-master/issues"
+		"url": "https://github.com/LousyBook94/pollinations-task-master/issues"
 	},
 	"files": [
 		"scripts/**",
