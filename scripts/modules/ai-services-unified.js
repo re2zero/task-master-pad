@@ -39,7 +39,9 @@ import {
 	OllamaAIProvider,
 	BedrockAIProvider,
 	AzureProvider,
-	VertexAIProvider
+	VertexAIProvider,
+	PollinationsAIProvider,
+	CustomAIProvider
 } from '../../src/ai-providers/index.js';
 
 // Create provider instances
@@ -53,7 +55,10 @@ const PROVIDERS = {
 	ollama: new OllamaAIProvider(),
 	bedrock: new BedrockAIProvider(),
 	azure: new AzureProvider(),
-	vertex: new VertexAIProvider()
+	vertex: new VertexAIProvider(),
+	// TODO: Add Pollinations and Custom providers when implemented
+	pollinations: new PollinationsAIProvider(),
+	custom: new CustomAIProvider()
 };
 
 // Helper function to get cost for a specific model
@@ -90,7 +95,8 @@ function _getCostForModel(providerName, modelId) {
 const MAX_RETRIES = 2;
 const INITIAL_RETRY_DELAY_MS = 1000;
 
-// Helper function to check if an error is retryable
+// ... [helper functions as before] ...
+
 function isRetryableError(error) {
 	const errorMessage = error.message?.toLowerCase() || '';
 	return (
@@ -104,62 +110,24 @@ function isRetryableError(error) {
 	);
 }
 
-/**
- * Extracts a user-friendly error message from a potentially complex AI error object.
- * Prioritizes nested messages and falls back to the top-level message.
- * @param {Error | object | any} error - The error object.
- * @returns {string} A concise error message.
- */
 function _extractErrorMessage(error) {
 	try {
-		// Attempt 1: Look for Vercel SDK specific nested structure (common)
-		if (error?.data?.error?.message) {
-			return error.data.error.message;
-		}
-
-		// Attempt 2: Look for nested error message directly in the error object
-		if (error?.error?.message) {
-			return error.error.message;
-		}
-
-		// Attempt 3: Look for nested error message in response body if it's JSON string
+		if (error?.data?.error?.message) return error.data.error.message;
+		if (error?.error?.message) return error.error.message;
 		if (typeof error?.responseBody === 'string') {
 			try {
 				const body = JSON.parse(error.responseBody);
-				if (body?.error?.message) {
-					return body.error.message;
-				}
-			} catch (parseError) {
-				// Ignore if responseBody is not valid JSON
-			}
+				if (body?.error?.message) return body.error.message;
+			} catch {}
 		}
-
-		// Attempt 4: Use the top-level message if it exists
-		if (typeof error?.message === 'string' && error.message) {
-			return error.message;
-		}
-
-		// Attempt 5: Handle simple string errors
-		if (typeof error === 'string') {
-			return error;
-		}
-
-		// Fallback
+		if (typeof error?.message === 'string' && error.message) return error.message;
+		if (typeof error === 'string') return error;
 		return 'An unknown AI service error occurred.';
 	} catch (e) {
-		// Safety net
 		return 'Failed to extract error message.';
 	}
 }
 
-/**
- * Internal helper to resolve the API key for a given provider.
- * @param {string} providerName - The name of the provider (lowercase).
- * @param {object|null} session - Optional MCP session object.
- * @param {string|null} projectRoot - Optional project root path for .env fallback.
- * @returns {string|null} The API key or null if not found/needed.
- * @throws {Error} If a required API key is missing.
- */
 function _resolveApiKey(providerName, session, projectRoot = null) {
 	const keyMap = {
 		openai: 'OPENAI_API_KEY',
@@ -174,14 +142,11 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		bedrock: 'AWS_ACCESS_KEY_ID',
 		vertex: 'GOOGLE_API_KEY'
 	};
-
-	const envVarName = keyMap[providerName];
-	if (!envVarName) {
-		throw new Error(
-			`Unknown provider '${providerName}' for API key resolution.`
-		);
+	if (providerName === 'pollinations' || providerName === 'custom') {
+		return null;
 	}
-
+	const envVarName = keyMap[providerName];
+	if (!envVarName) throw new Error(`Unknown provider '${providerName}' for API key resolution.`);
 	const apiKey = resolveEnvVariable(envVarName, session, projectRoot);
 
 	// Special handling for providers that can use alternative auth
@@ -472,25 +437,6 @@ async function _unifiedServiceRunner(serviceType, params) {
 			if (systemPrompt) {
 				messages.push({ role: 'system', content: systemPrompt });
 			}
-
-			// IN THE FUTURE WHEN DOING CONTEXT IMPROVEMENTS
-			// {
-			//     type: 'text',
-			//     text: 'Large cached context here like a tasks json',
-			//     providerOptions: {
-			//       anthropic: { cacheControl: { type: 'ephemeral' } }
-			//     }
-			//   }
-
-			// Example
-			// if (params.context) { // context is a json string of a tasks object or some other stu
-			//     messages.push({
-			//         type: 'text',
-			//         text: params.context,
-			//         providerOptions: { anthropic: { cacheControl: { type: 'ephemeral' } } }
-			//     });
-			// }
-
 			if (prompt) {
 				messages.push({ role: 'user', content: prompt });
 			} else {

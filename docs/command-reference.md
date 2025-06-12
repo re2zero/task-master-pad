@@ -261,4 +261,21 @@ task-master models --set-research=google/gemini-pro --openrouter
 task-master models --setup
 ```
 
-Configuration is stored in `.taskmasterconfig` in your project root. API keys are still managed via `.env` or MCP configuration. Use `task-master models` without flags to see available built-in models. Use `--setup` for a guided experience.
+### 🌱 Pollinations and Custom Provider Support
+
+- **Pollinations**: Use `provider: "pollinations"` for any role. No API key needed! Choose from a wide range of free, open models (see `task-master models --setup` for a full list).
+- **Custom**: Use `provider: "custom"` for any role. Set `CUSTOM_BASE` and `CUSTOM_API_KEY` in `.env` or override with `baseUrl` and `apiKey` in `.taskmasterconfig` for your own OpenAI-compatible endpoint.
+
+**Example:**
+```json
+"main": { "provider": "pollinations", "modelId": "openai" },
+"research": { "provider": "pollinations", "modelId": "searchgpt" },
+"custom": {
+  "provider": "custom",
+  "modelId": "gpt-4o",
+  "baseUrl": "https://your-custom-endpoint.com/openai",
+  "apiKey": "sk-your-custom-key"
+}
+```
+
+Configuration is stored in `.taskmasterconfig` in your project root. API keys are still managed via `.env` or MCP configuration. Use `task-master models` without flags to see available built-in models (including all new Pollinations models). Use `--setup` for a guided experience.

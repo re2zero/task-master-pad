@@ -13,24 +13,18 @@ Taskmaster uses two primary methods for configuration:
       {
         "models": {
           "main": {
-            "provider": "anthropic",
-            "modelId": "claude-3-7-sonnet-20250219",
-            "maxTokens": 64000,
-            "temperature": 0.2,
-            "baseURL": "https://api.anthropic.com/v1"
+            "provider": "pollinations",
+            "modelId": "openai" // Or any available Pollinations model
           },
           "research": {
-            "provider": "perplexity",
-            "modelId": "sonar-pro",
-            "maxTokens": 8700,
-            "temperature": 0.1,
-            "baseURL": "https://api.perplexity.ai/v1"
+            "provider": "pollinations",
+            "modelId": "searchgpt"
           },
-          "fallback": {
-            "provider": "anthropic",
-            "modelId": "claude-3-5-sonnet",
-            "maxTokens": 64000,
-            "temperature": 0.2
+          "custom": {
+            "provider": "custom",
+            "modelId": "gpt-4o",
+            "baseUrl": "https://your-custom-endpoint.com/openai", // optional, else uses .env
+            "apiKey": "sk-your-custom-key" // optional, else uses .env
           }
         },
         "global": {
@@ -42,7 +36,8 @@ Taskmaster uses two primary methods for configuration:
           "ollamaBaseURL": "http://localhost:11434/api",
           "azureBaseURL": "https://your-endpoint.azure.com/",
           "vertexProjectId": "your-gcp-project-id",
-          "vertexLocation": "us-central1"
+          "vertexLocation": "us-central1",
+          "azureOpenaiBaseUrl": "https://your-endpoint.openai.azure.com/"
         }
       }
       ```
@@ -79,7 +74,7 @@ Taskmaster uses two primary methods for configuration:
 
 **Important:** Settings like model ID selections (`main`, `research`, `fallback`), `maxTokens`, `temperature`, `logLevel`, `defaultSubtasks`, `defaultPriority`, and `projectName` are **managed in `.taskmaster/config.json`** (or `.taskmasterconfig` for unmigrated projects), not environment variables.
 
-## Example `.env` File (for API Keys)
+## Example `.env` File (for API Keys and Custom Provider)
 
 ```
 # Required API keys for providers configured in .taskmasterconfig
@@ -88,6 +83,12 @@ PERPLEXITY_API_KEY=pplx-your-key-here
 # OPENAI_API_KEY=sk-your-key-here
 # GOOGLE_API_KEY=AIzaSy...
 # etc.
+
+# For Pollinations provider: NO API key is needed!
+
+# For Custom provider (OpenAI-compatible endpoints)
+CUSTOM_BASE=https://your-custom-endpoint.com/openai
+CUSTOM_API_KEY=sk-your-custom-key
 
 # Optional Endpoint Overrides
 # AZURE_OPENAI_ENDPOINT=https://your-azure-endpoint.openai.azure.com/
@@ -118,7 +119,7 @@ node node_modules/claude-task-master/scripts/init.js
 Or clone the repository and run:
 
 ```bash
-git clone https://github.com/eyaltoledano/claude-task-master.git
+git clone https://github.com/LousyBook94/pollinations-task-master.git
 cd claude-task-master
 node scripts/init.js
 ```
