@@ -3,7 +3,6 @@ description: Guidelines for implementing utility functions
 globs: scripts/modules/utils.js, mcp-server/src/**/*
 alwaysApply: false
 ---
-
 # Utility Function Guidelines
 
 ## General Principles
@@ -45,10 +44,10 @@ alwaysApply: false
   ```
 
 - **Location**:
-    - **Core CLI Utilities**: Place utilities used primarily by the core `task-master` CLI logic and command modules (`scripts/modules/*`) into [`scripts/modules/utils.js`](:scripts/modules/utils.js).
+    - **Core CLI Utilities**: Place utilities used primarily by the core `task-master` CLI logic and command modules (`scripts/modules/*`) into [`scripts/modules/utils.js`](mdc:scripts/modules/utils.js).
     - **MCP Server Utilities**: Place utilities specifically designed to support the MCP server implementation into the appropriate subdirectories within `mcp-server/src/`.
-        - Path/Core Logic Helpers: [`mcp-server/src/core/utils/`](:mcp-server/src/core/utils/) (e.g., `path-utils.js`).
-        - Tool Execution/Response Helpers: [`mcp-server/src/tools/utils.js`](:mcp-server/src/tools/utils.js).
+        - Path/Core Logic Helpers: [`mcp-server/src/core/utils/`](mdc:mcp-server/src/core/utils/) (e.g., `path-utils.js`).
+        - Tool Execution/Response Helpers: [`mcp-server/src/tools/utils.js`](mdc:mcp-server/src/tools/utils.js).
 
 ## Documentation Standards
 
@@ -79,28 +78,30 @@ alwaysApply: false
   }
   ```
 
-## Configuration Management (in `scripts/modules/utils.js`)
+## Configuration Management (via `config-manager.js`)
 
-- **Environment Variables**:
-  - ✅ DO: Provide default values for all configuration
-  - ✅ DO: Use environment variables for customization
-  - ✅ DO: Document available configuration options
-  - ❌ DON'T: Hardcode values that should be configurable
+Taskmaster configuration (excluding API keys) is primarily managed through the `.taskmasterconfig` file located in the project root and accessed via getters in [`scripts/modules/config-manager.js`](mdc:scripts/modules/config-manager.js).
 
-  ```javascript
-  // ✅ DO: Set up configuration with defaults and environment overrides
-  const CONFIG = {
-    model: process.env.MODEL || 'claude-3-opus-20240229', // Updated default model
-    maxTokens: parseInt(process.env.MAX_TOKENS || '4000'),
-    temperature: parseFloat(process.env.TEMPERATURE || '0.7'),
-    debug: process.env.DEBUG === "true",
-    logLevel: process.env.LOG_LEVEL || "info",
-    defaultSubtasks: parseInt(process.env.DEFAULT_SUBTASKS || "3"),
-    defaultPriority: process.env.DEFAULT_PRIORITY || "medium",
-    projectName: process.env.PROJECT_NAME || "Task Master Project", // Generic project name
-    projectVersion: "1.5.0" // Version should be updated via release process
-  };
-  ```
+- **`.taskmasterconfig` File**:
+  - ✅ DO: Use this JSON file to store settings like AI model selections (main, research, fallback), parameters (temperature, maxTokens), logging level, default priority/subtasks, etc.
+  - ✅ DO: Manage this file using the `task-master models --setup` CLI command or the `models` MCP tool.
+  - ✅ DO: Rely on [`config-manager.js`](mdc:scripts/modules/config-manager.js) to load this file (using the correct project root passed from MCP or found via CLI utils), merge with defaults, and provide validated settings.
+  - ❌ DON'T: Store API keys in this file.
+  - ❌ DON'T: Manually edit this file unless necessary.
+
+- **Configuration Getters (`config-manager.js`)**:
+  - ✅ DO: Import and use specific getters from `config-manager.js` (e.g., `getMainProvider()`, `getLogLevel()`, `getMainMaxTokens()`) to access configuration values *needed for application logic* (like `getDefaultSubtasks`).
+  - ✅ DO: Pass the `explicitRoot` parameter to getters if calling from MCP direct functions to ensure the correct project's config is loaded.
+  - ❌ DON'T: Call AI-specific getters (like `getMainModelId`, `getMainMaxTokens`) from core logic functions (`scripts/modules/task-manager/*`). Instead, pass the `role` to the unified AI service.
+  - ❌ DON'T: Access configuration values directly from environment variables (except API keys).
+
+- **API Key Handling (`utils.js` & `ai-services-unified.js`)**:
+  - ✅ DO: Store API keys **only** in `.env` (for CLI, loaded by `dotenv` in `scripts/dev.js`) or `.roo/mcp.json` (for MCP, accessed via `session.env`).
+  - ✅ DO: Use `isApiKeySet(providerName, session)` from `config-manager.js` to check if a provider's key is available *before* potentially attempting an AI call if needed, but note the unified service performs its own internal check.
+  - ✅ DO: Understand that the unified service layer (`ai-services-unified.js`) internally resolves API keys using `resolveEnvVariable(key, session)` from `utils.js`.
+
+- **Error Handling**:
+  - ✅ DO: Handle potential `ConfigurationError` if the `.taskmasterconfig` file is missing or invalid when accessed via `getConfig` (e.g., in `commands.js` or direct functions).
 
 ## Logging Utilities (in `scripts/modules/utils.js`)
 
@@ -109,7 +110,7 @@ alwaysApply: false
   - ✅ DO: Use appropriate icons for different log levels
   - ✅ DO: Respect the configured log level
   - ❌ DON'T: Add direct console.log calls outside the logging utility
-  - **Note on Passed Loggers**: When a logger object (like the FastMCP `log` object) is passed *as a parameter* (e.g., as `mcpLog`) into core Task Master functions, the receiving function often expects specific methods (`.info`, `.warn`, `.error`, etc.) to be directly callable on that object (e.g., `mcpLog[level](...)`). If the passed logger doesn't have this exact structure, a wrapper object may be needed. See the **Handling Logging Context (`mcpLog`)** section in [`mcp.md`](:.roo/rules/mcp.md) for the standard pattern used in direct functions.
+  - **Note on Passed Loggers**: When a logger object (like the FastMCP `log` object) is passed *as a parameter* (e.g., as `mcpLog`) into core Task Master functions, the receiving function often expects specific methods (`.info`, `.warn`, `.error`, etc.) to be directly callable on that object (e.g., `mcpLog[level](...)`). If the passed logger doesn't have this exact structure, a wrapper object may be needed. See the **Handling Logging Context (`mcpLog`)** section in [`mcp.md`](mdc:.roo/rules/mcp.md) for the standard pattern used in direct functions.
 
 - **Logger Wrapper Pattern**: 
   - ✅ DO: Use the logger wrapper pattern when passing loggers to prevent `mcpLog[level] is not a function` errors:
@@ -131,7 +132,7 @@ alwaysApply: false
   - ✅ DO: Use this solution in conjunction with silent mode for complete output control
   - ❌ DON'T: Pass the FastMCP `log` object directly as `mcpLog` to core functions
   - **Important**: This pattern has successfully fixed multiple issues in MCP tools (e.g., `update-task`, `update-subtask`) where using or omitting `mcpLog` incorrectly led to runtime errors or JSON parsing failures.
-  - For complete implementation details, see the **Handling Logging Context (`mcpLog`)** section in [`mcp.md`](:.roo/rules/mcp.md).
+  - For complete implementation details, see the **Handling Logging Context (`mcpLog`)** section in [`mcp.md`](mdc:.roo/rules/mcp.md).
 
   ```javascript
   // ✅ DO: Implement a proper logging utility
@@ -319,7 +320,7 @@ alwaysApply: false
   - ✅ DO: Add context to subtask results
 
   ```javascript
-  // ✅ DO: Create comprehensive search utilities
+  // ✅ DO: Create comprehensive search_files utilities
   /**
    * Finds a task by ID in the tasks array
    * @param {Array} tasks - The tasks array
@@ -412,7 +413,7 @@ alwaysApply: false
 
 ### Project Root and Task File Path Detection (`path-utils.js`)
 
-- **Purpose**: This module ([`mcp-server/src/core/utils/path-utils.js`](:mcp-server/src/core/utils/path-utils.js)) provides the mechanism for locating the user's `tasks.json` file, used by direct functions.
+- **Purpose**: This module ([`mcp-server/src/core/utils/path-utils.js`](mdc:mcp-server/src/core/utils/path-utils.js)) provides the mechanism for locating the user's `tasks.json` file, used by direct functions.
 - **`findTasksJsonPath(args, log)`**:
     - ✅ **DO**: Call this function from within **direct function wrappers** (e.g., `listTasksDirect` in `mcp-server/src/core/direct-functions/`) to get the absolute path to the relevant `tasks.json`.
     - Pass the *entire `args` object* received by the MCP tool (which should include `projectRoot` derived from the session) and the `log` object.
@@ -422,41 +423,74 @@ alwaysApply: false
         3.  Search upwards from `process.cwd()` (CLI fallback).
     - Throws a specific error if the `tasks.json` file cannot be located.
     - Updates the `lastFoundProjectRoot` cache on success.
-- **`PROJECT_MARKERS`**: An exported array of common file/directory names used to identify a likely project root during the CLI fallback search.
+- **`PROJECT_MARKERS`**: An exported array of common file/directory names used to identify a likely project root during the CLI fallback search_files.
 - **`getPackagePath()`**: Utility to find the installation path of the `task-master-ai` package itself (potentially removable).
 
 ## MCP Server Tool Utilities (`mcp-server/src/tools/utils.js`)
 
-- **Purpose**: These utilities specifically support the MCP server tools ([`mcp-server/src/tools/*.js`](:mcp-server/src/tools/*.js)), handling MCP communication patterns, response formatting, caching integration, and the CLI fallback mechanism.
-- **Refer to [`mcp.md`](:.roo/rules/mcp.md)** for detailed usage patterns within the MCP tool `execute` methods and direct function wrappers.
+These utilities specifically support the implementation and execution of MCP tools.
 
-- **`getProjectRootFromSession(session, log)`**: 
-    - ✅ **DO**: Call this utility **within the MCP tool's `execute` method** to extract the project root path from the `session` object.
-    - Decodes the `file://` URI and handles potential errors.
-    - Returns the project path string or `null`.
-    - The returned path should then be passed in the `args` object when calling the corresponding `*Direct` function (e.g., `yourDirectFunction({ ...args, projectRoot: rootFolder }, log)`).
+- **`normalizeProjectRoot(rawPath, log)`**:
+    - **Purpose**: Takes a raw project root path (potentially URI encoded, with `file://` prefix, Windows slashes) and returns a normalized, absolute path suitable for the server's OS.
+    - **Logic**: Decodes URI, strips `file://`, handles Windows drive prefix (`/C:/`), replaces `\` with `/`, uses `path.resolve()`.
+    - **Usage**: Used internally by `withNormalizedProjectRoot` HOF.
+
+- **`getRawProjectRootFromSession(session, log)`**:
+    - **Purpose**: Extracts the *raw* project root URI string from the session object (`session.roots[0].uri` or `session.roots.roots[0].uri`) without performing normalization.
+    - **Usage**: Used internally by `withNormalizedProjectRoot` HOF as a fallback if `args.projectRoot` isn't provided.
+
+- **`withNormalizedProjectRoot(executeFn)`**:
+    - **Purpose**: A Higher-Order Function (HOF) designed to wrap a tool's `execute` method.
+    - **Logic**: 
+        1. Determines the raw project root (from `args.projectRoot` or `getRawProjectRootFromSession`).
+        2. Normalizes the raw path using `normalizeProjectRoot`.
+        3. Injects the normalized, absolute path back into the `args` object as `args.projectRoot`.
+        4. Calls the original `executeFn` with the updated `args`.
+    - **Usage**: Should wrap the `execute` function of *every* MCP tool that needs a reliable, normalized project root path.
+    - **Example**:
+      ```javascript
+      // In mcp-server/src/tools/your-tool.js
+      import { withNormalizedProjectRoot } from './utils.js';
+      
+      export function registerYourTool(server) {
+          server.addTool({
+              // ... name, description, parameters ...
+              execute: withNormalizedProjectRoot(async (args, context) => {
+                  // args.projectRoot is now normalized here
+                  const { projectRoot /*, other args */ } = args;
+                  // ... rest of tool logic using normalized projectRoot ...
+              })
+          });
+      }
+      ```
 
 - **`handleApiResult(result, log, errorPrefix, processFunction)`**:
-    - ✅ **DO**: Call this from the MCP tool's `execute` method after receiving the result from the `*Direct` function wrapper.
-    - Takes the standard `{ success, data/error, fromCache }` object.
-    - Formats the standard MCP success or error response, including the `fromCache` flag.
-    - Uses `processMCPResponseData` by default to filter response data.
-
-- **`executeTaskMasterCommand(command, log, args, projectRootRaw)`**:
-    - Executes a Task Master CLI command as a child process.
-    - Handles fallback between global `task-master` and local `node scripts/dev.js`.
-    - ❌ **DON'T**: Use this as the primary method for MCP tools. Prefer direct function calls via `*Direct` wrappers.
-
-- **`processMCPResponseData(taskOrData, fieldsToRemove)`**:
-    - Filters task data (e.g., removing `details`, `testStrategy`) before sending to the MCP client. Called by `handleApiResult`.
+    - **Purpose**: Standardizes the formatting of responses returned by direct functions (`{ success, data/error, fromCache }`) into the MCP response format.
+    - **Usage**: Call this at the end of the tool's `execute` method, passing the result from the direct function call.
 
 - **`createContentResponse(content)` / `createErrorResponse(errorMessage)`**:
-    - Formatters for standard MCP success/error responses.
+    - **Purpose**: Helper functions to create the basic MCP response structure for success or error messages.
+    - **Usage**: Used internally by `handleApiResult` and potentially directly for simple responses.
+
+- **`createLogWrapper(log)`**:
+    - **Purpose**: Creates a logger object wrapper with standard methods (`info`, `warn`, `error`, `debug`, `success`) mapping to the passed MCP `log` object's methods. Ensures compatibility when passing loggers to core functions.
+    - **Usage**: Used within direct functions before passing the `log` object down to core logic that expects the standard method names.
 
 - **`getCachedOrExecute({ cacheKey, actionFn, log })`**:
-    - ✅ **DO**: Use this utility *inside direct function wrappers* to implement caching.
-    - Checks cache, executes `actionFn` on miss, stores result.
-    - Returns standard `{ success, data/error, fromCache: boolean }`.
+    - **Purpose**: Utility for implementing caching within direct functions. Checks cache for `cacheKey`; if miss, executes `actionFn`, caches successful result, and returns.
+    - **Usage**: Wrap the core logic execution within a direct function call.
+
+- **`processMCPResponseData(taskOrData, fieldsToRemove)`**:
+    - **Purpose**: Utility to filter potentially sensitive or large fields (like `details`, `testStrategy`) from task objects before sending the response back via MCP.
+    - **Usage**: Passed as the default `processFunction` to `handleApiResult`.
+
+- **`getProjectRootFromSession(session, log)`**:
+    - **Purpose**: Legacy function to extract *and normalize* the project root from the session. Replaced by the HOF pattern but potentially still used.
+    - **Recommendation**: Prefer using the `withNormalizedProjectRoot` HOF in tools instead of calling this directly.
+
+- **`executeTaskMasterCommand(...)`**: 
+    - **Purpose**: Executes `task-master` CLI command as a fallback. 
+    - **Recommendation**: Deprecated for most uses; prefer direct function calls.
 
 ## Export Organization
 
@@ -466,7 +500,7 @@ alwaysApply: false
   - ✅ DO: Group related exports together.
   - ✅ DO: Export configuration constants (from `scripts/modules/utils.js`).
   - ❌ DON'T: Use default exports.
-  - ❌ DON'T: Create circular dependencies (See [`architecture.md`](:.roo/rules/architecture.md)).
+  - ❌ DON'T: Create circular dependencies (See [`architecture.md`](mdc:.roo/rules/architecture.md)).
 
 ```javascript
 // Example export from scripts/modules/utils.js
@@ -514,4 +548,4 @@ export {
 };
 ```
 
-Refer to [`mcp.md`](:.roo/rules/mcp.md) and [`architecture.md`](:.roo/rules/architecture.md) for more context on MCP server architecture and integration. 
+Refer to [`mcp.md`](mdc:.roo/rules/mcp.md) and [`architecture.md`](mdc:.roo/rules/architecture.md) for more context on MCP server architecture and integration. 

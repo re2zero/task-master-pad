@@ -1,6 +1,6 @@
 {
 	"name": "pollinations-taskmaster",
-	"version": "0.16.3",
+	"version": "0.16.2",
 	"description": "Pollinations-powered AI-first task management CLI. Like the original 'task-master'—now enhanced for open GenAI and modern code.",
 	"main": "index.js",
 	"type": "module",

@@ -13,3 +13,5 @@ export { OllamaAIProvider } from './ollama.js';
 export { BedrockAIProvider } from './bedrock.js';
 export { AzureProvider } from './azure.js';
 export { VertexAIProvider } from './google-vertex.js';
+export { PollinationsAIProvider } from './pollinations.js';
+export { CustomAIProvider } from './custom.js';

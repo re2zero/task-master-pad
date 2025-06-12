@@ -480,7 +480,7 @@ function getParametersForRole(role, explicitRoot = null) {
  */
 function isApiKeySet(providerName, session = null, projectRoot = null) {
 	// Define the expected environment variable name for each provider
-	if (providerName?.toLowerCase() === 'ollama') {
+	if (providerName?.toLowerCase() === 'ollama' || providerName?.toLowerCase() === 'pollinations' || providerName?.toLowerCase() === 'custom') {
 		return true; // Indicate key status is effectively "OK"
 	}
 
@@ -576,6 +576,10 @@ function getMcpApiKeyStatus(providerName, projectRoot = null) {
 				placeholderValue = 'YOUR_XAI_API_KEY_HERE';
 				break;
 			case 'ollama':
+				return true; // No key needed
+			case 'pollinations':
+				return true; // No key needed
+			case 'custom':
 				return true; // No key needed
 			case 'mistral':
 				apiKeyToCheck = mcpEnv.MISTRAL_API_KEY;

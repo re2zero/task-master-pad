@@ -69,7 +69,7 @@ alwaysApply: false
 ## Table Display Guidelines
 
 - **Table Structure**:
-  - Use [`cli-table3`](:node_modules/cli-table3/README.md) for consistent table rendering
+  - Use [`cli-table3`](mdc:node_modules/cli-table3/README.md) for consistent table rendering
   - Include colored headers with bold formatting
   - Use appropriate column widths for readability
 
@@ -101,7 +101,7 @@ alwaysApply: false
 ## Loading Indicators
 
 - **Animation Standards**:
-  - Use [`ora`](:node_modules/ora/readme.md) for spinner animations
+  - Use [`ora`](mdc:node_modules/ora/readme.md) for spinner animations
   - Create and stop loading indicators correctly
 
   ```javascript
@@ -150,4 +150,4 @@ alwaysApply: false
   ));
   ```
 
-Refer to [`ui.js`](:scripts/modules/ui.js) for implementation examples and [`new_features.md`](:.roo/rules/new_features.md) for integration guidelines. 
+Refer to [`ui.js`](mdc:scripts/modules/ui.js) for implementation examples and [`new_features.md`](mdc:.roo/rules/new_features.md) for integration guidelines. 

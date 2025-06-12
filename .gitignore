@@ -64,3 +64,20 @@ dev-debug.log
 
 # NPMRC
 .npmrc
+
+.specstory/
+
+# Added by Task Master AI
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# OS specific
+# Task files
+tasks.json
+tasks/ 
+.taskmaster/

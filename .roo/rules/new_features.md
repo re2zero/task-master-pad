@@ -3,20 +3,19 @@ description: Guidelines for integrating new features into the Task Master CLI
 globs: scripts/modules/*.js
 alwaysApply: false
 ---
-
 # Task Master Feature Integration Guidelines
 
 ## Feature Placement Decision Process
 
-- **Identify Feature Type** (See [`architecture.md`](:.roo/rules/architecture.md) for module details):
-  - **Data Manipulation**: Features that create, read, update, or delete tasks belong in [`task-manager.js`](:scripts/modules/task-manager.js). Follow guidelines in [`tasks.md`](:.roo/rules/tasks.md).
-  - **Dependency Management**: Features that handle task relationships belong in [`dependency-manager.js`](:scripts/modules/dependency-manager.js). Follow guidelines in [`dependencies.md`](:.roo/rules/dependencies.md).
-  - **User Interface**: Features that display information to users belong in [`ui.js`](:scripts/modules/ui.js). Follow guidelines in [`ui.md`](:.roo/rules/ui.md).
-  - **AI Integration**: Features that use AI models belong in [`ai-services.js`](:scripts/modules/ai-services.js).
+- **Identify Feature Type** (See [`architecture.md`](mdc:.roo/rules/architecture.md) for module details):
+  - **Data Manipulation**: Features that create, read, update, or delete tasks belong in [`task-manager.js`](mdc:scripts/modules/task-manager.js). Follow guidelines in [`tasks.md`](mdc:.roo/rules/tasks.md).
+  - **Dependency Management**: Features that handle task relationships belong in [`dependency-manager.js`](mdc:scripts/modules/dependency-manager.js). Follow guidelines in [`dependencies.md`](mdc:.roo/rules/dependencies.md).
+  - **User Interface**: Features that display information to users belong in [`ui.js`](mdc:scripts/modules/ui.js). Follow guidelines in [`ui.md`](mdc:.roo/rules/ui.md).
+  - **AI Integration**: Features that use AI models belong in [`ai-services.js`](mdc:scripts/modules/ai-services.js).
   - **Cross-Cutting**: Features that don't fit one category may need components in multiple modules
 
-- **Command-Line Interface** (See [`commands.md`](:.roo/rules/commands.md)):
-  - All new user-facing commands should be added to [`commands.js`](:scripts/modules/commands.js)
+- **Command-Line Interface** (See [`commands.md`](mdc:.roo/rules/commands.md)):
+  - All new user-facing commands should be added to [`commands.js`](mdc:scripts/modules/commands.js)
   - Use consistent patterns for option naming and help text
   - Follow the Commander.js model for subcommand structure
 
@@ -24,12 +23,18 @@ alwaysApply: false
 
 The standard pattern for adding a feature follows this workflow:
 
-1. **Core Logic**: Implement the business logic in the appropriate module (e.g., [`task-manager.js`](:scripts/modules/task-manager.js)).
-2. **UI Components**: Add any display functions to [`ui.js`](:scripts/modules/ui.js) following [`ui.md`](:.roo/rules/ui.md).
-3. **Command Integration**: Add the CLI command to [`commands.js`](:scripts/modules/commands.js) following [`commands.md`](:.roo/rules/commands.md).
-4. **Testing**: Write tests for all components of the feature (following [`tests.md`](:.roo/rules/tests.md))
-5. **Configuration**: Update any configuration in [`utils.js`](:scripts/modules/utils.js) if needed, following [`utilities.md`](:.roo/rules/utilities.md).
-6. **Documentation**: Update help text and documentation in [dev_workflow.md](:scripts/modules/dev_workflow.md)
+1. **Core Logic**: Implement the business logic in the appropriate module (e.g., [`task-manager.js`](mdc:scripts/modules/task-manager.js)).
+2. **AI Integration (If Applicable)**: 
+   - Import necessary service functions (e.g., `generateTextService`, `streamTextService`) from [`ai-services-unified.js`](mdc:scripts/modules/ai-services-unified.js).
+   - Prepare parameters (`role`, `session`, `systemPrompt`, `prompt`).
+   - Call the service function.
+   - Handle the response (direct text or stream object).
+   - **Important**: Prefer `generateTextService` for calls sending large context (like stringified JSON) where incremental display is not needed. See [`ai_services.md`](mdc:.roo/rules/ai_services.md) for detailed usage patterns and cautions.
+3. **UI Components**: Add any display functions to [`ui.js`](mdc:scripts/modules/ui.js) following [`ui.md`](mdc:.roo/rules/ui.md).
+4. **Command Integration**: Add the CLI command to [`commands.js`](mdc:scripts/modules/commands.js) following [`commands.md`](mdc:.roo/rules/commands.md).
+5. **Testing**: Write tests for all components of the feature (following [`tests.md`](mdc:.roo/rules/tests.md))
+6. **Configuration**: Update configuration settings or add new ones in [`config-manager.js`](mdc:scripts/modules/config-manager.js) and ensure getters/setters are appropriate. Update documentation in [`utilities.md`](mdc:.roo/rules/utilities.md) and [`taskmaster.md`](mdc:.roo/rules/taskmaster.md). Update the `.taskmasterconfig` structure if needed.
+7. **Documentation**: Update help text and documentation in [`dev_workflow.md`](mdc:.roo/rules/dev_workflow.md) and [`taskmaster.md`](mdc:.roo/rules/taskmaster.md).
 
 ## Critical Checklist for New Features
 
@@ -190,6 +195,8 @@ The standard pattern for adding a feature follows this workflow:
   - ✅ **DO**: If an MCP tool fails with vague errors (e.g., JSON parsing issues like `Unexpected token ... is not valid JSON`), **try running the equivalent CLI command directly in the terminal** (e.g., `task-master expand --all`). CLI output often provides much more specific error messages (like missing function definitions or stack traces from the core logic) that pinpoint the root cause.
   - ❌ **DON'T**: Rely solely on MCP logs if the error is unclear; use the CLI as a complementary debugging tool for core logic issues.
 
+- **Telemetry Integration**: Ensure AI calls correctly handle and propagate `telemetryData` as described in [`telemetry.md`](mdc:.roo/rules/telemetry.md).
+
 ```javascript
 // 1. CORE LOGIC: Add function to appropriate module (example in task-manager.js)
 /**
@@ -211,7 +218,29 @@ export {
 ```
 
 ```javascript
-// 2. UI COMPONENTS: Add display function to ui.js
+// 2. AI Integration: Add import and use necessary service functions
+import { generateTextService } from './ai-services-unified.js';
+
+// Example usage:
+async function handleAIInteraction() {
+  const role = 'user';
+  const session = 'exampleSession';
+  const systemPrompt = 'You are a helpful assistant.';
+  const prompt = 'What is the capital of France?';
+
+  const result = await generateTextService(role, session, systemPrompt, prompt);
+  console.log(result);
+}
+
+// Export from the module
+export {
+  // ... existing exports ...
+  handleAIInteraction,
+};
+```
+
+```javascript
+// 3. UI COMPONENTS: Add display function to ui.js
 /**
  * Display archive operation results
  * @param {string} archivePath - Path to the archive file
@@ -232,7 +261,7 @@ export {
 ```
 
 ```javascript
-// 3. COMMAND INTEGRATION: Add to commands.js
+// 4. COMMAND INTEGRATION: Add to commands.js
 import { archiveTasks } from './task-manager.js';
 import { displayArchiveResults } from './ui.js';
 
@@ -309,7 +338,7 @@ For features requiring components in multiple modules:
 
 ## Utility Function Guidelines
 
-When adding utilities to [`utils.js`](:scripts/modules/utils.js):
+When adding utilities to [`utils.js`](mdc:scripts/modules/utils.js):
 
 - Only add functions that could be used by multiple modules
 - Keep utilities single-purpose and purely functional
@@ -398,7 +427,7 @@ When implementing new features, follow these guidelines to ensure your code is t
 
 ## Testing Requirements
 
-Every new feature **must** include comprehensive tests following the guidelines in [`tests.md`](:.roo/rules/tests.md). Testing should include:
+Every new feature **must** include comprehensive tests following the guidelines in [`tests.md`](mdc:.roo/rules/tests.md). Testing should include:
 
 1. **Unit Tests**: Test individual functions and components in isolation
    ```javascript
@@ -436,10 +465,10 @@ Every new feature **must** include comprehensive tests following the guidelines 
 4. **Test Coverage**: Aim for at least 80% coverage for all new code
 
 5. **Jest Mocking Best Practices**
-   - Follow the mock-first-then-import pattern as described in [`tests.md`](:.roo/rules/tests.md)
+   - Follow the mock-first-then-import pattern as described in [`tests.md`](mdc:.roo/rules/tests.md)
    - Use jest.spyOn() to create spy functions for testing
    - Clear mocks between tests to prevent interference
-   - See the Jest Module Mocking Best Practices section in [`tests.md`](:.roo/rules/tests.md) for details
+   - See the Jest Module Mocking Best Practices section in [`tests.md`](mdc:.roo/rules/tests.md) for details
 
 When submitting a new feature, always run the full test suite to ensure nothing was broken:
 
@@ -452,8 +481,8 @@ npm test
 For each new feature:
 
 1. Add help text to the command definition
-2. Update [`dev_workflow.md`](:scripts/modules/dev_workflow.md) with command reference
-3. Consider updating [`architecture.md`](:.roo/rules/architecture.md) if the feature significantly changes module responsibilities.
+2. Update [`dev_workflow.md`](mdc:.roo/rules/dev_workflow.md) with command reference
+3. Consider updating [`architecture.md`](mdc:.roo/rules/architecture.md) if the feature significantly changes module responsibilities.
 
 Follow the existing command reference format:
 ```markdown
@@ -467,18 +496,18 @@ Follow the existing command reference format:
   - Notes: Additional details, limitations, or special considerations
 ```
 
-For more information on module structure, see [`MODULE_PLAN.md`](:scripts/modules/MODULE_PLAN.md) and follow [`self_improve.md`](:scripts/modules/self_improve.md) for best practices on updating documentation.
+For more information on module structure, see [`MODULE_PLAN.md`](mdc:scripts/modules/MODULE_PLAN.md) and follow [`self_improve.md`](mdc:scripts/modules/self_improve.md) for best practices on updating documentation.
 
 ## Adding MCP Server Support for Commands
 
-Integrating Task Master commands with the MCP server (for use by tools like Roo) follows a specific pattern distinct from the CLI command implementation, prioritizing performance and reliability.
+Integrating Task Master commands with the MCP server (for use by tools like Roo Code) follows a specific pattern distinct from the CLI command implementation, prioritizing performance and reliability.
 
 - **Goal**: Leverage direct function calls to core logic, avoiding CLI overhead.
-- **Reference**: See [`mcp.md`](:.roo/rules/mcp.md) for full details.
+- **Reference**: See [`mcp.md`](mdc:.roo/rules/mcp.md) for full details.
 
 **MCP Integration Workflow**:
 
-1.  **Core Logic**: Ensure the command's core logic exists and is exported from the appropriate module (e.g., [`task-manager.js`](:scripts/modules/task-manager.js)).
+1.  **Core Logic**: Ensure the command's core logic exists and is exported from the appropriate module (e.g., [`task-manager.js`](mdc:scripts/modules/task-manager.js)).
 2.  **Direct Function Wrapper (`mcp-server/src/core/direct-functions/`)**:
     - Create a new file (e.g., `your-command.js`) in `mcp-server/src/core/direct-functions/` using **kebab-case** naming.
     - Import the core logic function, necessary MCP utilities like **`findTasksJsonPath` from `../utils/path-utils.js`**, and **silent mode utilities**: `import { enableSilentMode, disableSilentMode } from '../../../../scripts/modules/utils.js';`
@@ -495,14 +524,24 @@ Integrating Task Master commands with the MCP server (for use by tools like Roo)
 
 4.  **Create MCP Tool (`mcp-server/src/tools/`)**:
     - Create a new file (e.g., `your-command.js`) using **kebab-case**.
-    - Import `zod`, `handleApiResult`, `createErrorResponse`, **`getProjectRootFromSession`**, and your `yourCommandDirect` function.
+    - Import `zod`, `handleApiResult`, **`withNormalizedProjectRoot` HOF**, and your `yourCommandDirect` function.
     - Implement `registerYourCommandTool(server)`.
-    - Define the tool `name` using **snake_case** (e.g., `your_command`).
-    - Define the `parameters` using `zod`. **Crucially, define `projectRoot` as optional**: `projectRoot: z.string().optional().describe(...)`. Include `file` if applicable.
-    - Implement the standard `async execute(args, { log, reportProgress, session })` method:
-      - Get `rootFolder` using `getProjectRootFromSession` (with fallback to `args.projectRoot`).
-      - Call `yourCommandDirect({ ...args, projectRoot: rootFolder }, log)`. 
-      - Pass the result to `handleApiResult(result, log, 'Error Message')`.
+    - **Define parameters**: Make `projectRoot` optional (`z.string().optional().describe(...)`) as the HOF handles fallback.
+    - Consider if this operation should run in the background using `AsyncOperationManager`.
+    - Implement the standard `execute` method **wrapped with `withNormalizedProjectRoot`**:
+      ```javascript
+      execute: withNormalizedProjectRoot(async (args, { log, session }) => {
+          // args.projectRoot is now normalized
+          const { projectRoot /*, other args */ } = args;
+          // ... resolve tasks path if needed using normalized projectRoot ...
+          const result = await yourCommandDirect(
+              { /* other args */, projectRoot /* if needed by direct func */ }, 
+              log, 
+              { session }
+          );
+          return handleApiResult(result, log);
+      })
+      ```
 
 5.  **Register Tool**: Import and call `registerYourCommandTool` in `mcp-server/src/tools/index.js`.
 

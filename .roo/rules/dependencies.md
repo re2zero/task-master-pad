@@ -189,7 +189,7 @@ alwaysApply: false
 ## Cycle Detection
 
 - **Graph Traversal**:
-  - ✅ DO: Use depth-first search (DFS) for cycle detection
+  - ✅ DO: Use depth-first search_files (DFS) for cycle detection
   - ✅ DO: Track visited nodes and recursion stack
   - ✅ DO: Support both task and subtask dependencies
 
@@ -221,4 +221,4 @@ alwaysApply: false
   }
   ```
 
-Refer to [`dependency-manager.js`](:scripts/modules/dependency-manager.js) for implementation examples and [`new_features.md`](:.roo/rules/new_features.md) for integration guidelines. 
+Refer to [`dependency-manager.js`](mdc:scripts/modules/dependency-manager.js) for implementation examples and [`new_features.md`](mdc:.roo/rules/new_features.md) for integration guidelines. 

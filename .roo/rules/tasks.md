@@ -328,4 +328,4 @@ alwaysApply: false
   }
   ```
 
-Refer to [`task-manager.js`](:scripts/modules/task-manager.js) for implementation examples and [`new_features.md`](:.roo/rules/new_features.md) for integration guidelines. 
+Refer to [`task-manager.js`](mdc:scripts/modules/task-manager.js) for implementation examples and [`new_features.md`](mdc:.roo/rules/new_features.md) for integration guidelines. 

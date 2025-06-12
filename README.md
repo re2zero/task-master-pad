@@ -88,14 +88,19 @@ MCP (Model Control Protocol) provides the easiest way to get started with Pollin
 
 > 🔑 Replace `YOUR_…_KEY_HERE` with your real API keys. You can remove keys you don't use.
 
-3. **Prompt the AI** to initialize Pollinations TaskMaster AI:
+###### VS Code (servers + type)
 
 ```json
 {
-  "servers": {
+{
+  "mcpServers": {
     "taskmaster-ai": {
       "command": "npx",
-      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+      "args": [
+        "-y",
+        "--pollinations-taskmaster",
+        "task-master-mcp"
+      ],
       "env": {
         "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY_HERE",
         "PERPLEXITY_API_KEY": "YOUR_PERPLEXITY_API_KEY_HERE",
@@ -106,13 +111,17 @@ MCP (Model Control Protocol) provides the easiest way to get started with Pollin
         "XAI_API_KEY": "YOUR_XAI_KEY_HERE",
         "AZURE_OPENAI_API_KEY": "YOUR_AZURE_KEY_HERE"
       },
-      "type": "stdio"
+      "type": "stdio",
+      "autoApprove": [],
+      "disabled": true
     }
   }
 }
+
 ```
 
-> 🔑 Replace `YOUR_…_KEY_HERE` with your real API keys. You can remove keys you don't use.
+    🔑 Replace YOUR_…_KEY_HERE with your real API keys. You can remove keys you don't use.
+
 
 #### 2. (Cursor-only) Enable Taskmaster MCP
 

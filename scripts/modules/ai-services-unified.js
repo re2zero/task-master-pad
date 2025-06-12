@@ -142,7 +142,7 @@ function _resolveApiKey(providerName, session, projectRoot = null) {
 		bedrock: 'AWS_ACCESS_KEY_ID',
 		vertex: 'GOOGLE_API_KEY'
 	};
-	if (providerName === 'pollinations' || providerName === 'custom') {
+	if (providerName?.toLowerCase() === 'pollinations' || providerName?.toLowerCase() === 'custom') {
 		return null;
 	}
 	const envVarName = keyMap[providerName];
