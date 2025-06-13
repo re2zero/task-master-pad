@@ -661,6 +661,27 @@ function aggregateTelemetry(telemetryArray, overallCommandName) {
 	return aggregated;
 }
 
+/**
+ * 获取枚举对象的所有值
+ * @param {Object} enumObject - 枚举对象
+ * @returns {Array} - 枚举值数组
+ */
+function getEnumValues(enumObject) {
+	return Object.values(enumObject);
+}
+
+/**
+ * Handles errors by logging them to the console and exiting the process.
+ * @param {Error} error - The error object to handle.
+ */
+function handleError(error) {
+	console.error(chalk.red(`Error: ${error.message}`));
+	if (CONFIG && CONFIG.debug) {
+		console.error(error);
+	}
+	process.exit(1);
+}
+
 // Export all utility functions and configuration
 export {
 	LOG_LEVELS,
@@ -684,5 +705,7 @@ export {
 	addComplexityToTask,
 	resolveEnvVariable,
 	findProjectRoot,
-	aggregateTelemetry
+	aggregateTelemetry,
+	getEnumValues,
+	handleError
 };

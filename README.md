@@ -241,22 +241,39 @@ CUSTOM_BASE=https://your-custom-endpoint.com/openai
 CUSTOM_API_KEY=sk-your-custom-key
 ```
 
-**Example `.taskmasterconfig`:**
+**Example `.taskmaster/config.json`:**
 ```json
-"models": {
-  "main": {
-    "provider": "pollinations",
-    "modelId": "openai" // or any available model
+{
+  "models": {
+    "main": {
+      "provider": "pollinations",
+      "modelId": "openai-fast",
+      "maxTokens": 50000,
+      "temperature": 0.2
+    },
+    "research": {
+      "provider": "pollinations",
+      "modelId": "searchgpt",
+      "maxTokens": 8700,
+      "temperature": 0.1
+    },
+    "fallback": {
+      "provider": "pollinations",
+      "modelId": "openai-large",
+      "maxTokens": 4096,
+      "temperature": 0.2
+    }
   },
-  "research": {
-    "provider": "pollinations",
-    "modelId": "searchgpt"
-  },
-  "custom": {
-    "provider": "custom",
-    "modelId": "gpt-4o",
-    "baseUrl": "https://your-custom-endpoint.com/openai", // optional override
-    "apiKey": "sk-your-custom-key" // optional override
+  "global": {
+    "logLevel": "info",
+    "debug": false,
+    "defaultSubtasks": 5,
+    "defaultPriority": "medium",
+    "projectName": "Taskmaster",
+    "ollamaBaseURL": "http://localhost:11434/api",
+    "bedrockBaseURL": "https://bedrock.us-east-1.amazonaws.com",
+    "userId": "1234567890",
+    "azureBaseURL": "https://your-endpoint.azure.com/"
   }
 }
 ```

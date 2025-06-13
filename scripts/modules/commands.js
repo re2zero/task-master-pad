@@ -13,7 +13,7 @@ import http from 'http';
 import inquirer from 'inquirer';
 import ora from 'ora'; // Import ora
 
-import { log, readJSON, findProjectRoot } from './utils.js';
+import { log, readJSON, findProjectRoot, handleError } from './utils.js';
 import {
 	parsePRD,
 	updateTasks,
@@ -88,6 +88,7 @@ import {
 } from '../../src/constants/task-status.js';
 import { getTaskMasterVersion } from '../../src/utils/getVersion.js';
 import { syncTasksToReadme } from './sync-readme.js';
+import * as modeManager from './riper5-workflow/modes/modeManager.js';
 
 /**
  * Runs the interactive setup process for model configuration.
@@ -2803,6 +2804,49 @@ Examples:
 			if (!success) {
 				console.error(chalk.red('❌ Failed to sync tasks to README.md'));
 				process.exit(1);
+			}
+		});
+
+	const riper5Command = programInstance.command('riper5')
+		.description('Manage the RIPER-5 workflow for tasks.');
+
+	riper5Command
+		.command('init <taskId>')
+		.description('Initialize the RIPER-5 workflow for a specific task.')
+		.action((taskId) => {
+			try {
+				const projectRoot = findProjectRoot();
+				modeManager.initializeWorkflow(projectRoot, taskId);
+				console.log(`RIPER-5 workflow initialized for task ${taskId}.`);
+			} catch (error) {
+				handleError(error);
+			}
+		});
+
+	riper5Command
+		.command('switch <taskId> <mode>')
+		.description('Switch the active mode for a task.')
+		.action((taskId, mode) => {
+			try {
+				const projectRoot = findProjectRoot();
+				modeManager.switchMode(projectRoot, taskId, mode);
+				console.log(`Task ${taskId} switched to ${mode} mode.`);
+			} catch (error) {
+				handleError(error);
+			}
+		});
+
+	riper5Command
+		.command('status')
+		.description('Get the current status of the RIPER-5 workflow.')
+		.action(() => {
+			try {
+				const projectRoot = findProjectRoot();
+				const status = modeManager.getStatus(projectRoot);
+				console.log('RIPER-5 Workflow Status:');
+				console.log(JSON.stringify(status, null, 2));
+			} catch (error) {
+				handleError(error);
 			}
 		});
 

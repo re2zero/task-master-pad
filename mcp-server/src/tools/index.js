@@ -17,18 +17,33 @@ import { registerExpandTaskTool } from './expand-task.js';
 import { registerAddTaskTool } from './add-task.js';
 import { registerAddSubtaskTool } from './add-subtask.js';
 import { registerRemoveSubtaskTool } from './remove-subtask.js';
-import { registerAnalyzeProjectComplexityTool } from './analyze.js';
 import { registerClearSubtasksTool } from './clear-subtasks.js';
 import { registerExpandAllTool } from './expand-all.js';
 import { registerRemoveDependencyTool } from './remove-dependency.js';
 import { registerValidateDependenciesTool } from './validate-dependencies.js';
 import { registerFixDependenciesTool } from './fix-dependencies.js';
-import { registerComplexityReportTool } from './complexity-report.js';
 import { registerAddDependencyTool } from './add-dependency.js';
 import { registerRemoveTaskTool } from './remove-task.js';
 import { registerInitializeProjectTool } from './initialize-project.js';
 import { registerModelsTool } from './models.js';
 import { registerMoveTaskTool } from './move-task.js';
+import { registerAnalyzeProjectComplexityTool } from './analyze.js';
+import { registerComplexityReportTool } from './complexity-report.js';
+
+// 导入RIPER-5工作流工具
+import {
+	registerInitializeRiper5Tool,
+	registerSwitchModeTool,
+	registerGetStatusTool,
+	registerGetModeProgressTool,
+	registerGetAllModeProgressTool,
+	registerGetNextRecommendedModeTool,
+	registerGetModeHistoryTool,
+	registerExportModeHistoryReportTool,
+	registerAddHistoryCommentTool,
+	registerGenerateTaskFileTool,
+	registerExportTaskReportTool
+} from './riper5-workflow.js';
 
 /**
  * Register all Task Master tools with the MCP server
@@ -74,6 +89,19 @@ export function registerTaskMasterTools(server) {
 		registerRemoveDependencyTool(server);
 		registerValidateDependenciesTool(server);
 		registerFixDependenciesTool(server);
+		
+		// Group 7: RIPER-5工作流工具
+		registerInitializeRiper5Tool(server);
+		registerSwitchModeTool(server);
+		registerGetStatusTool(server);
+		registerGetModeProgressTool(server);
+		registerGetAllModeProgressTool(server);
+		registerGetNextRecommendedModeTool(server);
+		registerGetModeHistoryTool(server);
+		registerExportModeHistoryReportTool(server);
+		registerAddHistoryCommentTool(server);
+		registerGenerateTaskFileTool(server);
+		registerExportTaskReportTool(server);
 	} catch (error) {
 		logger.error(`Error registering Task Master tools: ${error.message}`);
 		throw error;
