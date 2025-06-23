@@ -15,3 +15,4 @@ export { AzureProvider } from './azure.js';
 export { VertexAIProvider } from './google-vertex.js';
 export { PollinationsAIProvider } from './pollinations.js';
 export { CustomAIProvider } from './custom.js';
+export { ClaudeCodeProvider } from './claude-code.js';
